@@ -1,6 +1,5 @@
+![Logo MEOW](https://user-images.githubusercontent.com/45496261/110118912-57c7cb80-7dbb-11eb-86e1-5ec0446ee97c.png)
 
-2[(https://user-images.githubusercontent.com/45496261/110118912-57c7cb80-7dbb-11eb-86e1-5ec0446ee97c.png)
-# MeowItemCreator 📝
 
 - Create Customized ItemStacks with Meta in one line of code
 - Working from 1.7.x to 1.16.x
