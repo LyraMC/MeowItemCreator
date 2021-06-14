@@ -1,19 +1,14 @@
 package dev.meowlyramc.meowitemcreator;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import dev.lyramc.api.nms.Reflection;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.TileEntitySkull;
+import dev.meowlyramc.meowitemcreator.Reflection;
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.block.Skull;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -21,13 +16,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
-import org.apache.commons.codec.binary.Base64;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +40,10 @@ public class MeowItemCreator {
         this.item = new ItemStack(mat, 1, data);
     }
 
+    public MeowItemCreator(final Material mat, final byte data, final int amount) {
+        this.item = new ItemStack(mat, amount, data);
+    }
+
     public MeowItemCreator withName(final String name) {
         final ItemMeta meta = this.item.getItemMeta();
         meta.setDisplayName(name);
@@ -58,9 +51,11 @@ public class MeowItemCreator {
         return this;
     }
 
-    public MeowItemCreator withData(final Byte data) {
+    public MeowItemCreator withData(final int data) {
         final MaterialData meta = this.item.getData();
-        meta.setData(data);
+        /*meta.setData(data);
+        this.item.getData().setData((byte) data);*/
+        item.getData().setData((byte) data);
         return this;
     }
 
@@ -80,13 +75,13 @@ public class MeowItemCreator {
         return this;
     }
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public MeowItemCreator addLore(final ArrayList<String> lore) {
+    public MeowItemCreator addLore(final List<String> lore) {
         final ItemMeta meta = this.item.getItemMeta();
-        final List<String> a = (List<String>)meta.getLore();
+        final List<String> a = meta.getLore();
         for (final String s : lore) {
             a.add(s);
         }
-        meta.setLore((List)a);
+        meta.setLore(a);
         this.item.setItemMeta(meta);
         return this;
     }
@@ -134,10 +129,24 @@ public class MeowItemCreator {
         return this;
     }
 
+    public MeowItemCreator removeItemFlag(ItemFlag flag) {
+        this.item.getItemMeta().removeItemFlags(flag);
+        return this;
+    }
+
+    public MeowItemCreator removeFlags() {
+        for(ItemFlag itemFlag : ItemFlag.values()) {
+            this.item.getItemMeta().removeItemFlags(itemFlag);
+        }
+        return this;
+    }
+
     public MeowItemCreator withTexture(String url) {
         if(!this.item.getType().equals(Material.SKULL_ITEM) || url == null) return this;
         url = "http://textures.minecraft.net/texture/" + url;
+        ItemMeta meta = item.getItemMeta();
         this.item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        item.setItemMeta(meta);
         Base64 base64 = new Base64();
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         PropertyMap propertyMap = profile.getProperties();
@@ -156,6 +165,4 @@ public class MeowItemCreator {
     public ItemStack done() {
         return this.item;
     }
-
-
 }
